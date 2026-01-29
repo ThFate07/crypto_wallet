@@ -1,14 +1,16 @@
-import { useState } from "react";
+import React, { useContext, useState } from "react";
 import BlockchainCard from "./BlockchainCard";
 import { Button } from "./ui/button";
-import { type blockchain } from "@/types/types";
+import { type blockchain, type SelectBlockchainProps } from "@/types/types";
+import { Link } from "react-router-dom";
+import { useWallet } from "@/context/WalletContext";
 
 export default function SelectBlockchain() {
-  const [selectedChain, setSelectedChain] = useState<blockchain>("Solana");
+  const { chain, setChain } = useWallet();
 
   return (
     <>
-      <div className="bg-[#1D1F24] h-96 w-96 rounded-2xl">
+      <div className="bg-[#1D1F24] h-96 w-96 rounded-2xl my-36">
         <div className="flex flex-col p-5 gap-4">
           <div className="flex flex-col gap-2">
             <div>
@@ -23,27 +25,32 @@ export default function SelectBlockchain() {
             <BlockchainCard
               imageSrc="./solana.png"
               blockchainName="Solana"
-              selectedChain={selectedChain}
-              setSelectedChain={setSelectedChain}
+              selectedChain={chain}
+              setSelectedChain={setChain}
             />
             <BlockchainCard
               imageSrc="./eth.png"
               blockchainName="Ethereum"
-              selectedChain={selectedChain}
-              setSelectedChain={setSelectedChain}
+              selectedChain={chain}
+              setSelectedChain={setChain}
             />
             <BlockchainCard
               imageSrc="./bitcoin.png"
               blockchainName="Bitcoin"
-              selectedChain={selectedChain}
-              setSelectedChain={setSelectedChain}
+              selectedChain={chain}
+              setSelectedChain={setChain}
             />
           </div>
 
           <div className="my-2">
-            <Button variant={"secondary"} className="bg-[#184391] w-full hover:bg-[#1F54B3] transition-all duration-150 ease-out hover: scale-[1.01] active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed">
-              Next
-            </Button>
+            <Link to={'/onboarding/seed-phrase'}>
+              <Button
+                variant={"secondary"}
+                className="bg-[#184391] w-full hover:bg-[#1F54B3] transition-all duration-150 ease-out hover: scale-[1.01] active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
