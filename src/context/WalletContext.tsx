@@ -5,13 +5,11 @@ export const WalletContext = createContext<WalletContextType | null>(null);
 
 
 export function WalletProvider({children}: {children: ReactNode}) {
-     
     const [chain , setChain] = useState<blockchain>('Solana');
-    const [seed, setSeed] = useState<string | null>(null);
 
     return (
         <>
-            <WalletContext.Provider value={{chain, setChain, seed, setSeed}} >
+            <WalletContext.Provider value={{chain, setChain}} >
                 {children}
             </WalletContext.Provider>
         </>

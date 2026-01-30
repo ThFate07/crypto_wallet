@@ -1,7 +1,5 @@
-import React, { useContext, useState } from "react";
 import BlockchainCard from "./BlockchainCard";
 import { Button } from "./ui/button";
-import { type blockchain, type SelectBlockchainProps } from "@/types/types";
 import { Link } from "react-router-dom";
 import { useWallet } from "@/context/WalletContext";
 
@@ -23,19 +21,19 @@ export default function SelectBlockchain() {
 
           <div className="flex flex-col gap-3">
             <BlockchainCard
-              imageSrc="./solana.png"
+              imageSrc="/solana.png"
               blockchainName="Solana"
               selectedChain={chain}
               setSelectedChain={setChain}
             />
             <BlockchainCard
-              imageSrc="./eth.png"
+              imageSrc="/eth.png"
               blockchainName="Ethereum"
               selectedChain={chain}
               setSelectedChain={setChain}
             />
             <BlockchainCard
-              imageSrc="./bitcoin.png"
+              imageSrc="/bitcoin.png"
               blockchainName="Bitcoin"
               selectedChain={chain}
               setSelectedChain={setChain}

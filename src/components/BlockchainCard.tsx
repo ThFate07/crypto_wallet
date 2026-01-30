@@ -17,7 +17,7 @@ export default function BlockchainCard({ imageSrc, blockchainName, selectedChain
 
           {isActive ? (
             <div className="ms-auto">
-              <img src="./tick.png" alt="" className="w-6 h-6" />
+              <img src="/tick.png" alt="" className="w-6 h-6" />
             </div>
           ) : (
             ""

@@ -10,8 +10,6 @@ export type blockchainCard = {
 export type WalletContextType = {
   chain: blockchain;
   setChain: React.Dispatch<React.SetStateAction<blockchain>>;
-  seed: string | null;
-  setSeed: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
 export type blockchain = 'Bitcoin' | 'Ethereum' | 'Solana';

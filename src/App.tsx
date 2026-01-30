@@ -2,7 +2,7 @@ import "./App.css";
 import { ThemeProvider } from "@/components/ui/theme-provider.tsx";
 import NavBar from "@/components/navbar";
 import SelectBlockchain from "@/components/SelectBlockchain";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import SeedPhrase from "./components/SeedPhrase";
 
 function App() {
@@ -19,6 +19,7 @@ function App() {
               <Route path="/onboarding/select-chain" element={< SelectBlockchain />}></Route>
               <Route path="/onboarding/seed-phrase" element={< SeedPhrase />}></Route>
               {/* <Route path="/onboarding/select-chain" element={< SelectBlockchain />}></Route> */}
+              <Route path="*" element={<Navigate to={"/onboarding/select-chain"} replace></Navigate>}></Route>
             </Routes>
           </div>
         </ThemeProvider>
