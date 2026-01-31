@@ -13,3 +13,7 @@ export type WalletContextType = {
 };
 
 export type blockchain = 'Bitcoin' | 'Ethereum' | 'Solana';
+
+export type wallet = { name: string, address: string , publicKey: string, privateKey: string, chain: string}
+
+export type WalletCardProps = wallet

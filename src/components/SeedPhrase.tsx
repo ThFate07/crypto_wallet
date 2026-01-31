@@ -34,7 +34,8 @@ export default function SeedPhrase() {
 
   const copyToClipboard = () => { 
    navigator.clipboard.writeText(mnemonic.join(" "));
-   navigate('/wallets')
+   toast("Mnemonic copied...", { position: "bottom-right" })
+   navigate('/dashboard')
   }
 
   return (

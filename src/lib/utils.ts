@@ -6,6 +6,9 @@ import { generateMnemonic, mnemonicToSeedSync } from "bip39";
 import { derivePath } from "ed25519-hd-key";
 import nacl from "tweetnacl";
 import { Keypair } from "@solana/web3.js";
+import { ethers } from 'ethers';
+import HDNode from 'hdkey'
+import { toast } from "sonner";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -22,11 +25,18 @@ const WalletGenerator = {
       const derivedSeed = derivePath(path, seed.toString("hex")).key;
       const secret = nacl.sign.keyPair.fromSeed(derivedSeed).secretKey;
       const keypair = Keypair.fromSecretKey(secret);
-
-      return { address: keypair.publicKey.toBase58() , publicKey: keypair.publicKey, privateKey: keypair.secretKey, chain: "Solana" } ;
+      
+      return { address: keypair.publicKey.toBase58() , publicKey: keypair.publicKey, privateKey: keypair.secretKey, chain: "Solana", name: "New Wallet" } ;
     },
-    Bitcoin: (seed: Buffer<ArrayBufferLike>, path: string) => {},
-    Ethereum: (seed: Buffer<ArrayBufferLike>, path: string) => {}
+    Bitcoin: (seed: Buffer<ArrayBufferLike>, path: string) => {
+      const hdKey = HDNode.fromMasterSeed(seed)
+      const derivedSeed = hdKey.derive(path)
+    },
+    Ethereum: (seed: Buffer<ArrayBufferLike>, path: string) => {
+      const rootNode = ethers.HDNodeWallet.fromSeed(seed);
+      const wallet = rootNode.derivePath(path)
+      return {address: wallet.address, publicKey: wallet.publicKey, privateKey: wallet.privateKey, chain: "Ethereum", name: "New Wallet" }
+    }
 };
 
 export function deriveWalletFromSeed(seed: Buffer<ArrayBufferLike>, chain: blockchain, index: number) {
@@ -38,6 +48,15 @@ export const generateWallet = (chain: blockchain, index: number) => {
   const mnemonic = generateMnemonic();
   const seed = mnemonicToSeedSync(mnemonic);  
   const wallet = deriveWalletFromSeed(seed, chain, index);
-
+  
+  localStorage.setItem('wallets', JSON.stringify([wallet]))
+  localStorage.setItem('masterSeed', seed.toString('hex'));
   return { mnemonic, wallet };
 };
+
+
+export function handleCopy(toCopyString: string, toastMsg: string){ 
+  navigator.clipboard.writeText(toCopyString);
+  toast(toastMsg, { position: "bottom-right" });
+              
+}

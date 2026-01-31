@@ -4,6 +4,8 @@ import NavBar from "@/components/navbar";
 import SelectBlockchain from "@/components/SelectBlockchain";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import SeedPhrase from "./components/SeedPhrase";
+import { Dashboard } from "./components/Dashboard";
+import { Toaster } from "@/components/ui/sonner"
 
 function App() {
   return (
@@ -18,9 +20,11 @@ function App() {
             <Routes>
               <Route path="/onboarding/select-chain" element={< SelectBlockchain />}></Route>
               <Route path="/onboarding/seed-phrase" element={< SeedPhrase />}></Route>
-              {/* <Route path="/onboarding/select-chain" element={< SelectBlockchain />}></Route> */}
+              <Route path="/dashboard" element={< Dashboard/>}></Route>
               <Route path="*" element={<Navigate to={"/onboarding/select-chain"} replace></Navigate>}></Route>
             </Routes>
+
+            < Toaster />
           </div>
         </ThemeProvider>
       </BrowserRouter>
