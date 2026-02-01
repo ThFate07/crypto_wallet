@@ -25,8 +25,8 @@ const WalletGenerator = {
       const derivedSeed = derivePath(path, seed.toString("hex")).key;
       const secret = nacl.sign.keyPair.fromSeed(derivedSeed).secretKey;
       const keypair = Keypair.fromSecretKey(secret);
-      
-      return { address: keypair.publicKey.toBase58() , publicKey: keypair.publicKey.toBase58(), privateKey: Buffer.from(keypair.secretKey).toString('hex'), chain: "Solana", name: "New Wallet" } ;
+      const id = Date.now()
+      return { address: keypair.publicKey.toBase58() , publicKey: keypair.publicKey.toBase58(), privateKey: Buffer.from(keypair.secretKey).toString('hex'), chain: "Solana", name: "New Wallet", id } ;
     },
     Bitcoin: (seed: Buffer<ArrayBufferLike>, path: string) => {
       const hdKey = HDNode.fromMasterSeed(seed)
@@ -36,7 +36,8 @@ const WalletGenerator = {
     Ethereum: (seed: Buffer<ArrayBufferLike>, path: string) => {
       const rootNode = ethers.HDNodeWallet.fromSeed(seed);
       const wallet = rootNode.derivePath(path)
-      return {address: wallet.address, publicKey: wallet.publicKey, privateKey: wallet.privateKey, chain: "Ethereum", name: "New Wallet" }
+      const id = Date.now()
+      return {address: wallet.address, publicKey: wallet.publicKey, privateKey: wallet.privateKey, chain: "Ethereum", name: "New Wallet", id}
     }
 };
 

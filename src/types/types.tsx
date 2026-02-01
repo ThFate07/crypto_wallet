@@ -14,6 +14,9 @@ export type WalletContextType = {
 
 export type blockchain = 'Bitcoin' | 'Ethereum' | 'Solana';
 
-export type wallet = { name: string, address: string , publicKey: string, privateKey: string, chain: string}
+export type wallet = { name: string, address: string , publicKey: string, privateKey: string, chain: string, id: number}
 
-export type WalletCardProps = wallet
+export type WalletCardProps = { 
+  wallet: wallet,
+  onRename: (id: number, name: string) => void
+}

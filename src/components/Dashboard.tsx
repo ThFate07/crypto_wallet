@@ -13,8 +13,26 @@ export function Dashboard() {
       return JSON.parse(wallets);
     }
   });
-
   const { chain, setChain } = useWallet();
+
+
+  function onRename(id: number, name: string) { 
+    const oldWallets: wallet[] = JSON.parse(localStorage.getItem('wallets') ?? '[]');
+
+    if (oldWallets) { 
+      const newWallets = oldWallets.map(wallet => { 
+        if (wallet.id === id) { 
+          return {...wallet, name}
+        }
+
+        return wallet
+      })
+
+      setWallets(newWallets);
+      localStorage.setItem('wallets', JSON.stringify(newWallets))
+    }
+  }
+
 
   return (
     <>
@@ -58,14 +76,22 @@ export function Dashboard() {
           <Button
             onClick={() => {
               localStorage.removeItem("wallets");
-              setWallets([])
+              setWallets([]);
             }}
           >
             Clear all
           </Button>
         </div>
 
-        {wallets.map((wallet) => (chain == wallet.chain ? <WalletCard {...wallet} /> : null))}
+        {wallets.map(wallet =>
+          chain == wallet.chain ? (
+            <WalletCard
+              key={wallet.id}
+              wallet={wallet}
+              onRename={onRename}
+            />
+          ) : null,
+        )}
       </div>
     </>
   );
