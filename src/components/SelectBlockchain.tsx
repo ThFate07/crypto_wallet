@@ -8,7 +8,7 @@ export default function SelectBlockchain() {
 
   return (
     <>
-      <div className="bg-[#1D1F24] h-96 w-96 rounded-2xl my-36">
+      <div className="bg-[#1D1F24] h-content w-96 rounded-2xl my-36">
         <div className="flex flex-col p-5 gap-4">
           <div className="flex flex-col gap-2">
             <div>
@@ -32,12 +32,12 @@ export default function SelectBlockchain() {
               selectedChain={chain}
               setSelectedChain={setChain}
             />
-            <BlockchainCard
+            {/* <BlockchainCard
               imageSrc="/bitcoin.png"
               blockchainName="Bitcoin"
               selectedChain={chain}
               setSelectedChain={setChain}
-            />
+            /> */}
           </div>
 
           <div className="my-2">

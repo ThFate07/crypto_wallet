@@ -1,6 +1,6 @@
 import { useWallet } from "@/context/WalletContext";
 import { generateWallet } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { Button } from "./ui/button";
 import { useNavigate } from 'react-router-dom'
 import { toast } from "sonner"
@@ -25,8 +25,8 @@ const WarningIcon = () => (
 );
 
 export default function SeedPhrase() {
-  const { chain, setChain } = useWallet();
-  const [mnemonic, setMnemonic] = useState(() => {
+  const { chain } = useWallet();
+  const [mnemonic ] = useState(() => {
     const { mnemonic } = generateWallet(chain, 0);
     return mnemonic.split(" ");
   });
@@ -61,7 +61,7 @@ export default function SeedPhrase() {
 
         {/* mnemonic */}
         <div className="grid grid-cols-3 place-items-center h-full max-h-90 mb-6">
-          {mnemonic.map((keyword, index) => (
+          {mnemonic.map((keyword) => (
             <div className="flex flex-row justify-center gap-5 border-2 rounded-3xl p-5 w-full max-w-42">
               <div className="">{keyword}</div>
             </div>

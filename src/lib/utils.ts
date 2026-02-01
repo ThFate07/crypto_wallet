@@ -26,11 +26,12 @@ const WalletGenerator = {
       const secret = nacl.sign.keyPair.fromSeed(derivedSeed).secretKey;
       const keypair = Keypair.fromSecretKey(secret);
       
-      return { address: keypair.publicKey.toBase58() , publicKey: keypair.publicKey, privateKey: keypair.secretKey, chain: "Solana", name: "New Wallet" } ;
+      return { address: keypair.publicKey.toBase58() , publicKey: keypair.publicKey.toBase58(), privateKey: Buffer.from(keypair.secretKey).toString('hex'), chain: "Solana", name: "New Wallet" } ;
     },
     Bitcoin: (seed: Buffer<ArrayBufferLike>, path: string) => {
       const hdKey = HDNode.fromMasterSeed(seed)
       const derivedSeed = hdKey.derive(path)
+      console.log(derivedSeed)
     },
     Ethereum: (seed: Buffer<ArrayBufferLike>, path: string) => {
       const rootNode = ethers.HDNodeWallet.fromSeed(seed);
@@ -57,6 +58,5 @@ export const generateWallet = (chain: blockchain, index: number) => {
 
 export function handleCopy(toCopyString: string, toastMsg: string){ 
   navigator.clipboard.writeText(toCopyString);
-  toast(toastMsg, { position: "bottom-right" });
-              
+  toast(toastMsg, { position: "bottom-right" });             
 }
