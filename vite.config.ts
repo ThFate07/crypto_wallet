@@ -23,4 +23,13 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"), // Maps @ to project root
     },
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://api.coingecko.com',
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/api/, ''),
+      },
+    },
+  },
 });

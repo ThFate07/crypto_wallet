@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { WalletCard } from "./ui/WalletCard";
-import type { wallet } from "@/types/types";
+import type { TokenBalances, wallet, walletsWithData } from "@/types/types";
 import { Button } from "./ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useWallet } from "@/context/WalletContext";
 import { deriveWalletFromSeed } from "@/lib/utils";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { getBalance, getPrices } from "@/lib/solana";
 
 export function Dashboard() {
   const [wallets, setWallets] = useState<wallet[]>(() => {
@@ -14,10 +15,11 @@ export function Dashboard() {
       return JSON.parse(wallets);
     }
 
-    return []
+    return [];
   });
   const { chain, setChain } = useWallet();
-  const [chainNetwork, setChainNetwork] = useState<'main' | 'dev'>('main')
+  const [chainNetwork, setChainNetwork] = useState<"main" | "dev">("main");
+  const [walletsWithData, setWalletsWithData] = useState<walletsWithData[]>()
 
   function onRename(id: number, name: string) {
     const oldWallets: wallet[] = JSON.parse(localStorage.getItem("wallets") ?? "[]");
@@ -36,6 +38,58 @@ export function Dashboard() {
     }
   }
 
+  useEffect(() => {
+    // get all the wallets, for each  wallet fetch their tokenBalances and add unique mint address to a list.
+    // after that is done we use that mint address to fetch the current prices and then do the calculation and add that data to the wallet
+
+    const fetchBalance = async () => {
+      const baseWallet = [...wallets];
+      const uniqueMintAddress = new Set();
+
+      const walletsWithData: walletsWithData[] = await Promise.all(baseWallet.map(async w => {
+        const data = await getBalance(w.publicKey, chainNetwork);
+        const tokenBalances: TokenBalances = {
+          'So11111111111111111111111111111111111111112': {
+            amount: data.nativeBalance,
+            symbol: "SOL",
+          },
+        };
+
+        
+        data.tokens.map(({ mint, amount, symbol }) => {
+
+          if (!mint || !symbol) return;
+          
+          uniqueMintAddress.add(mint)
+          tokenBalances[mint] = {
+            amount,
+            symbol,
+          };
+        });
+
+        return { 
+          ...w,
+          tokenBalances
+        }
+        
+      }));
+      
+      const currentPrices = await getPrices(Array.from(uniqueMintAddress));
+      
+      walletsWithData.forEach(wallet => { 
+        let totalUsd = 0;
+        for (let [mint, bal] of Object.entries(wallet.tokenBalances)) { 
+          const price = currentPrices[mint]?.usd ?? 0;
+          totalUsd += bal.amount * price
+        }
+        wallet.totalUsd = totalUsd;
+      })
+
+      setWalletsWithData(walletsWithData)
+    };
+
+    fetchBalance();    
+  }, [wallets]);
 
   return (
     <>
@@ -56,14 +110,14 @@ export function Dashboard() {
           </div>
 
           <div>
-            <Select value='main' onValueChange={(v) => setChainNetwork(v as 'main' | 'dev')}>
+            <Select value="main" onValueChange={v => setChainNetwork(v as "main" | "dev")}>
               <SelectTrigger className="w-45">
-                <SelectValue/>
+                <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="main" >Main Net</SelectItem>
-                  <SelectItem value="dev" >Dev net</SelectItem>
+                  <SelectItem value="main">Main Net</SelectItem>
+                  <SelectItem value="dev">Dev net</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -102,8 +156,10 @@ export function Dashboard() {
           </Button>
         </div>
 
-        {wallets.map(wallet =>
-          chain == wallet.chain ? <WalletCard key={wallet.id} wallet={wallet} onRename={onRename} chainNetwork={chainNetwork}/> : null,
+        {walletsWithData && walletsWithData.map(wallet =>
+          chain == wallet.chain ? (
+            <WalletCard key={wallet.id} wallet={wallet} onRename={onRename} chainNetwork={chainNetwork} />
+          ) : null,
         )}
       </div>
     </>

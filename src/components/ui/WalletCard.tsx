@@ -63,40 +63,8 @@ function WalletEditForm({ wallet, onRename }: WalletCardEditProps) {
 
 export function WalletCard({ wallet, onRename, chainNetwork }: WalletCardProps) {
   const [copied, setCopied] = useState(false);
-  const [balance, setBalance] = useState<number>(0);
-  const [tokenBalance, setTokenBalance] = useState<TokenBalances | null>(null);
 
-  useEffect(() => {
-    let isMounted = true;
 
-    if (!wallet || !chainNetwork) return;
-
-    const fetchBalance = async () => {
-      const data = await getBalance(wallet.publicKey, chainNetwork);
-      if (isMounted) {
-        const tokenBalance: TokenBalances = {
-          SOL: {
-            amount: data.nativeBalance,
-            symbol: "SOL",
-          },
-        };
-
-        data.tokens.map(({ mint, amount, symbol }) => {
-          if (!symbol) return;
-
-          tokenBalance[mint] = { amount, symbol };
-        });
-
-        setTokenBalance(tokenBalance);
-      }
-    };
-
-    fetchBalance();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [wallet.publicKey, chainNetwork]);
 
   return (
     <>
@@ -147,10 +115,10 @@ export function WalletCard({ wallet, onRename, chainNetwork }: WalletCardProps) 
           </DialogContent>
         </Dialog>
 
-        <h1 className="text-2xl">$153.2</h1>
+        <h1 className="text-2xl">${wallet.totalUsd}</h1>
         <div className="flex gap-2 text-sm">
-          {tokenBalance && Object.entries(tokenBalance).map(([key, value]) => ( 
-            <span>{value.amount} {value.symbol}</span>
+          {wallet.tokenBalances && Object.entries(wallet.tokenBalances).map(([key, value]) => ( 
+            <span key={key}>{value.amount} {value.symbol}</span>
           ))}
         </div>
       </div>
