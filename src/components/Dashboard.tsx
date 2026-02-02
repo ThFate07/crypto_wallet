@@ -44,7 +44,7 @@ export function Dashboard() {
 
     const fetchBalance = async () => {
       const baseWallet = [...wallets];
-      const uniqueMintAddress = new Set();
+      const uniqueMintAddress = new Map();
 
       const walletsWithData: walletsWithData[] = await Promise.all(baseWallet.map(async w => {
         const data = await getBalance(w.publicKey, chainNetwork);
@@ -55,14 +55,15 @@ export function Dashboard() {
           },
         };
 
+        uniqueMintAddress.set('So11111111111111111111111111111111111111112', 1);
         
-        data.tokens.map(({ mint, amount, symbol }) => {
+        data.tokens.map(({ mint, amount, symbol }: { mint?: string; amount?: number; symbol?: string }) => {
 
           if (!mint || !symbol) return;
           
-          uniqueMintAddress.add(mint)
+          uniqueMintAddress.set(mint, 1)
           tokenBalances[mint] = {
-            amount,
+            amount: amount ?? 0,
             symbol,
           };
         });
@@ -74,11 +75,12 @@ export function Dashboard() {
         
       }));
       
-      const currentPrices = await getPrices(Array.from(uniqueMintAddress));
+      const currentPrices = await getPrices(Array.from(uniqueMintAddress.keys()));
+      console.log(uniqueMintAddress)
       
       walletsWithData.forEach(wallet => { 
         let totalUsd = 0;
-        for (let [mint, bal] of Object.entries(wallet.tokenBalances)) { 
+        for (const [mint, bal] of Object.entries(wallet.tokenBalances)) { 
           const price = currentPrices[mint]?.usd ?? 0;
           totalUsd += bal.amount * price
         }
@@ -89,7 +91,7 @@ export function Dashboard() {
     };
 
     fetchBalance();    
-  }, [wallets]);
+  }, [wallets, chainNetwork]);
 
   return (
     <>
@@ -110,7 +112,7 @@ export function Dashboard() {
           </div>
 
           <div>
-            <Select value="main" onValueChange={v => setChainNetwork(v as "main" | "dev")}>
+            <Select value={chainNetwork} onValueChange={v => setChainNetwork(v as "main" | "dev")}>
               <SelectTrigger className="w-45">
                 <SelectValue />
               </SelectTrigger>

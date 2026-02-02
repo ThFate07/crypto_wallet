@@ -19,7 +19,7 @@ export type wallet = { name: string, address: string , publicKey: string, privat
 export type WalletCardProps = { 
   wallet: walletsWithData,
   onRename: (id: number, name: string) => void,
-  chainNetwork: 'main' | 'dev'
+  chainNetwork?: 'main' | 'dev'
 }
 
 export type WalletCardEditProps = { 

@@ -1,4 +1,4 @@
-import { Connection, PublicKey } from "@solana/web3.js";
+import { Connection, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import axios from "axios";
 
 const heliusAPI = import.meta.env.VITE_HELIUS_API;
@@ -20,6 +20,17 @@ export const getAccountInfo = async (publicKey: string, connectionType: "main" |
 };
 
 export const getBalance = async (wallet: string, connectionType: "main" | "dev") => {
+  if (connectionType === 'dev') { 
+    const pubkey = new PublicKey(wallet);
+    const lamports = await solanaConnections.dev.getBalance(pubkey);
+
+   
+    return {  
+      nativeBalance: lamports / LAMPORTS_PER_SOL,
+      tokens: [],
+    }
+  };
+  
   const api_key = API_KEYS[connectionType]
   const res = await fetch(
     `https://api.helius.xyz/v0/addresses/${wallet}/balances?api-key=${api_key}`,
@@ -31,7 +42,7 @@ export const getBalance = async (wallet: string, connectionType: "main" | "dev")
   return data
 };
 
-export async function getPrices(mintAddress) { 
+export async function getPrices(mintAddress: string[]) { 
   const ids = mintAddress.join(',');
   const url = "https://api.coingecko.com/api/v3/simple/token_price/solana";
 

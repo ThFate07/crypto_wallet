@@ -11,9 +11,8 @@ import {
 import { Input } from "./input";
 import { Copy, Check } from "lucide-react";
 import { handleCopy } from "@/lib/utils";
-import { useEffect, useState } from "react";
-import type { TokenBalances, WalletCardEditProps, WalletCardProps } from "@/types/types";
-import { getBalance } from "@/lib/solana";
+import {useState } from "react";
+import type {WalletCardEditProps, WalletCardProps } from "@/types/types";
 
 function WalletEditForm({ wallet, onRename }: WalletCardEditProps) {
   const [name, setName] = useState(wallet.name);
@@ -61,7 +60,7 @@ function WalletEditForm({ wallet, onRename }: WalletCardEditProps) {
   );
 }
 
-export function WalletCard({ wallet, onRename, chainNetwork }: WalletCardProps) {
+export function WalletCard({ wallet, onRename }: WalletCardProps) {
   const [copied, setCopied] = useState(false);
 
 
