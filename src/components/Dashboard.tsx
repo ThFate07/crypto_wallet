@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { WalletCard } from "./ui/WalletCard";
 import type { wallet } from "@/types/types";
 import { Button } from "./ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useWallet } from "@/context/WalletContext";
 import { deriveWalletFromSeed } from "@/lib/utils";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export function Dashboard() {
   const [wallets, setWallets] = useState<wallet[]>(() => {
@@ -12,24 +13,26 @@ export function Dashboard() {
     if (wallets) {
       return JSON.parse(wallets);
     }
+
+    return []
   });
   const { chain, setChain } = useWallet();
+  const [chainNetwork, setChainNetwork] = useState<'main' | 'dev'>('main')
 
+  function onRename(id: number, name: string) {
+    const oldWallets: wallet[] = JSON.parse(localStorage.getItem("wallets") ?? "[]");
 
-  function onRename(id: number, name: string) { 
-    const oldWallets: wallet[] = JSON.parse(localStorage.getItem('wallets') ?? '[]');
-
-    if (oldWallets) { 
-      const newWallets = oldWallets.map(wallet => { 
-        if (wallet.id === id) { 
-          return {...wallet, name}
+    if (oldWallets) {
+      const newWallets = oldWallets.map(wallet => {
+        if (wallet.id === id) {
+          return { ...wallet, name };
         }
 
-        return wallet
-      })
+        return wallet;
+      });
 
       setWallets(newWallets);
-      localStorage.setItem('wallets', JSON.stringify(newWallets))
+      localStorage.setItem("wallets", JSON.stringify(newWallets));
     }
   }
 
@@ -37,18 +40,34 @@ export function Dashboard() {
   return (
     <>
       <div className="w-[80%] flex flex-col items-center h-full gap-5 relative">
-        <div className="w-full max-w-4xl">
-          <ToggleGroup type="single" defaultValue={chain}>
-            <ToggleGroupItem value="Solana" onClick={() => setChain("Solana")}>
-              Solana
-            </ToggleGroupItem>
-            <ToggleGroupItem value="Ethereum" onClick={() => setChain("Ethereum")}>
-              Ethereum
-            </ToggleGroupItem>
-            {/* <ToggleGroupItem value="Bitcoin" onClick={() => setChain("Bitcoin")}>
+        <div className="flex w-full max-w-4xl justify-between">
+          <div>
+            <ToggleGroup type="single" defaultValue={chain}>
+              <ToggleGroupItem value="Solana" onClick={() => setChain("Solana")}>
+                Solana
+              </ToggleGroupItem>
+              <ToggleGroupItem value="Ethereum" onClick={() => setChain("Ethereum")}>
+                Ethereum
+              </ToggleGroupItem>
+              {/* <ToggleGroupItem value="Bitcoin" onClick={() => setChain("Bitcoin")}>
               Bitcoin
             </ToggleGroupItem> */}
-          </ToggleGroup>
+            </ToggleGroup>
+          </div>
+
+          <div>
+            <Select value='main' onValueChange={(v) => setChainNetwork(v as 'main' | 'dev')}>
+              <SelectTrigger className="w-45">
+                <SelectValue/>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value="main" >Main Net</SelectItem>
+                  <SelectItem value="dev" >Dev net</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <div className="w-full max-w-4xl flex gap-2">
@@ -84,13 +103,7 @@ export function Dashboard() {
         </div>
 
         {wallets.map(wallet =>
-          chain == wallet.chain ? (
-            <WalletCard
-              key={wallet.id}
-              wallet={wallet}
-              onRename={onRename}
-            />
-          ) : null,
+          chain == wallet.chain ? <WalletCard key={wallet.id} wallet={wallet} onRename={onRename} chainNetwork={chainNetwork}/> : null,
         )}
       </div>
     </>

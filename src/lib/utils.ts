@@ -61,3 +61,4 @@ export function handleCopy(toCopyString: string, toastMsg: string){
   navigator.clipboard.writeText(toCopyString);
   toast(toastMsg, { position: "bottom-right" });             
 }
+

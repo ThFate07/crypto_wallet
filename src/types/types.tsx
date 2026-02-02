@@ -18,5 +18,18 @@ export type wallet = { name: string, address: string , publicKey: string, privat
 
 export type WalletCardProps = { 
   wallet: wallet,
-  onRename: (id: number, name: string) => void
+  onRename: (id: number, name: string) => void,
+  chainNetwork: 'main' | 'dev'
 }
+
+export type WalletCardEditProps = { 
+  wallet: wallet,
+  onRename: (id: number, name: string) => void,
+}
+
+interface TokenBalanceEntry {
+  amount: number;
+  symbol?: string;
+}
+
+export type TokenBalances = Record<string, TokenBalanceEntry>;
