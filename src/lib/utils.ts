@@ -1,4 +1,4 @@
-import type { blockchain } from "@/types/types";
+import type { blockchain, wallet, WalletDataResponse, walletsWithData } from "@/types/types";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { Buffer } from "buffer";
@@ -62,3 +62,20 @@ export function handleCopy(toCopyString: string, toastMsg: string){
   toast(toastMsg, { position: "bottom-right" });             
 }
 
+export function aggregateWalletData(wallets: wallet[], walletData: WalletDataResponse[]) { 
+  const finalWalletData = wallets.map(wallet => { 
+
+    const curWalletData = walletData.find(wd => wd.publicKey === wallet.publicKey);
+
+    if (!curWalletData) return null;
+
+    return { 
+      ...wallet,
+      mainNet: curWalletData.mainNet,
+      devNet: curWalletData.devNet
+      
+    }
+  }).filter(w => w !== null) as walletsWithData[];
+
+  return finalWalletData
+}

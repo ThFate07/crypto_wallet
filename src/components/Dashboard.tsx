@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { WalletCard } from "./ui/WalletCard";
-import type { TokenBalances, wallet, walletsWithData } from "@/types/types";
+import type { wallet, walletsWithData } from "@/types/types";
 import { Button } from "./ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useWallet } from "@/context/WalletContext";
-import { deriveWalletFromSeed } from "@/lib/utils";
+import { aggregateWalletData, deriveWalletFromSeed } from "@/lib/utils";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { getBalance, getPrices } from "@/lib/solana";
+import axios from "axios";
 
 export function Dashboard() {
   const [wallets, setWallets] = useState<wallet[]>(() => {
@@ -19,7 +19,7 @@ export function Dashboard() {
   });
   const { chain, setChain } = useWallet();
   const [chainNetwork, setChainNetwork] = useState<"main" | "dev">("main");
-  const [walletsWithData, setWalletsWithData] = useState<walletsWithData[]>()
+  const [walletsWithData, setWalletsWithData] = useState<walletsWithData[]>();
 
   function onRename(id: number, name: string) {
     const oldWallets: wallet[] = JSON.parse(localStorage.getItem("wallets") ?? "[]");
@@ -39,59 +39,19 @@ export function Dashboard() {
   }
 
   useEffect(() => {
-    // get all the wallets, for each  wallet fetch their tokenBalances and add unique mint address to a list.
-    // after that is done we use that mint address to fetch the current prices and then do the calculation and add that data to the wallet
+    const fetchBalance = async (wallets: wallet[]) => {
+      const data = wallets.map(w => ({ publicKey: w.publicKey, chain: w.chain }));
+      const url = "http://localhost:3000/fetch-wallet-details"
+      const response = await axios.post(url , { wallets: data });
 
-    const fetchBalance = async () => {
-      const baseWallet = [...wallets];
-      const uniqueMintAddress = new Map();
-
-      const walletsWithData: walletsWithData[] = await Promise.all(baseWallet.map(async w => {
-        const data = await getBalance(w.publicKey, chainNetwork);
-        const tokenBalances: TokenBalances = {
-          'So11111111111111111111111111111111111111112': {
-            amount: data.nativeBalance,
-            symbol: "SOL",
-          },
-        };
-
-        uniqueMintAddress.set('So11111111111111111111111111111111111111112', 1);
-        
-        data.tokens.map(({ mint, amount, symbol }: { mint?: string; amount?: number; symbol?: string }) => {
-
-          if (!mint || !symbol) return;
-          
-          uniqueMintAddress.set(mint, 1)
-          tokenBalances[mint] = {
-            amount: amount ?? 0,
-            symbol,
-          };
-        });
-
-        return { 
-          ...w,
-          tokenBalances
-        }
-        
-      }));
-      
-      const currentPrices = await getPrices(Array.from(uniqueMintAddress.keys()));
-      console.log(uniqueMintAddress)
-      
-      walletsWithData.forEach(wallet => { 
-        let totalUsd = 0;
-        for (const [mint, bal] of Object.entries(wallet.tokenBalances)) { 
-          const price = currentPrices[mint]?.usd ?? 0;
-          totalUsd += bal.amount * price
-        }
-        wallet.totalUsd = totalUsd;
-      })
-
-      setWalletsWithData(walletsWithData)
+      if (response.data.message === "successfull") {
+        const finalWallet = aggregateWalletData(wallets, response.data.walletWithPrices);
+        setWalletsWithData(finalWallet);
+      }
     };
 
-    fetchBalance();    
-  }, [wallets, chainNetwork]);
+    fetchBalance(wallets);
+  }, [wallets]);
 
   return (
     <>
@@ -158,11 +118,12 @@ export function Dashboard() {
           </Button>
         </div>
 
-        {walletsWithData && walletsWithData.map(wallet =>
-          chain == wallet.chain ? (
-            <WalletCard key={wallet.id} wallet={wallet} onRename={onRename} chainNetwork={chainNetwork} />
-          ) : null,
-        )}
+        {walletsWithData &&
+          walletsWithData.map(wallet =>
+            chain == wallet.chain ? (
+              <WalletCard key={wallet.id} wallet={wallet} onRename={onRename} chainNetwork={chainNetwork} />
+            ) : null,
+          )}
       </div>
     </>
   );

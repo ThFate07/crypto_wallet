@@ -27,11 +27,39 @@ export type WalletCardEditProps = {
   onRename: (id: number, name: string) => void,
 }
 
-interface TokenBalanceEntry {
-  amount: number;
-  symbol?: string;
+export type token = { 
+  mint: string,
+  amount: number,
+  decimals: number,
+  symbol?: string
 }
+export type walletsWithData = wallet & { 
+  mainNet: { 
+    solBalance: number,
+    tokens: token[]
+    totalBalance: number
+  },
+  devNet : { 
+    solBalance: number,
+    tokens: token[]
+    totalBalance: number
+  }
+};
 
-export type TokenBalances = Record<string, TokenBalanceEntry>;
 
-export type walletsWithData = wallet & { tokenBalances: TokenBalances, totalUsd?: number};
+
+export type WalletDataResponse = { 
+  publicKey: string,
+  chain: string,
+   mainNet: { 
+    solBalance: number,
+    tokens: token[]
+    totalBalance: number
+  },
+  devNet : { 
+    solBalance: number,
+    tokens: token[]
+    totalBalance: number
+  }
+
+}

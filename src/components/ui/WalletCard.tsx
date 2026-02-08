@@ -11,8 +11,8 @@ import {
 import { Input } from "./input";
 import { Copy, Check } from "lucide-react";
 import { handleCopy } from "@/lib/utils";
-import {useState } from "react";
-import type {WalletCardEditProps, WalletCardProps } from "@/types/types";
+import { useState } from "react";
+import type { WalletCardEditProps, WalletCardProps } from "@/types/types";
 
 function WalletEditForm({ wallet, onRename }: WalletCardEditProps) {
   const [name, setName] = useState(wallet.name);
@@ -60,14 +60,13 @@ function WalletEditForm({ wallet, onRename }: WalletCardEditProps) {
   );
 }
 
-export function WalletCard({ wallet, onRename }: WalletCardProps) {
+export function WalletCard({ wallet, onRename, chainNetwork }: WalletCardProps) {
   const [copied, setCopied] = useState(false);
-
-
+  const walletData = (chainNetwork === "main") ? wallet.mainNet : wallet.devNet;
 
   return (
     <>
-      <div className="bg-[#1D1F24] w-full h-content max-h-40 max-w-4xl rounded-xl p-5 flex flex-col gap-1">
+      <div className="bg-[#1D1F24] w-full h-content max-h-40 max-w-4xl rounded-xl p-5 flex flex-col">
         <Dialog>
           <div className="text-xl flex justify-between">
             <div className="flex items-center gap-3 ">
@@ -114,11 +113,17 @@ export function WalletCard({ wallet, onRename }: WalletCardProps) {
           </DialogContent>
         </Dialog>
 
-        <h1 className="text-2xl">${wallet.totalUsd}</h1>
+        <h1 className="text-2xl mb-2">${walletData.totalBalance.toFixed(2)}</h1>
         <div className="flex gap-2 text-sm">
-          {wallet.tokenBalances && Object.entries(wallet.tokenBalances).map(([key, value]) => ( 
-            <span key={key}>{value.amount} {value.symbol}</span>
-          ))}
+          <span>
+            {walletData.solBalance} SOL
+          </span>
+          {walletData.tokens &&
+            walletData.tokens.filter(token => token.symbol).map((token, index) => (
+              <span key={index}>
+                {(token.amount / 10 ** token.decimals)} {token.symbol}
+              </span>
+            ))}
         </div>
       </div>
     </>
