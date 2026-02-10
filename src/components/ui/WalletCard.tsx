@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "./input";
 import { Copy, Check } from "lucide-react";
-import { handleCopy } from "@/lib/utils";
+import { filterWalletTokenData, handleCopy } from "@/lib/utils";
 import { useState } from "react";
 import type { WalletCardEditProps, WalletCardProps } from "@/types/types";
 
@@ -62,7 +62,8 @@ function WalletEditForm({ wallet, onRename }: WalletCardEditProps) {
 
 export function WalletCard({ wallet, onRename, chainNetwork }: WalletCardProps) {
   const [copied, setCopied] = useState(false);
-  const walletData = (chainNetwork === "main") ? wallet.mainNet : wallet.devNet;
+
+  const walletData = "mainNet" in wallet ? (chainNetwork === "main" ? wallet.mainNet : wallet.devNet) : undefined;
 
   return (
     <>
@@ -113,18 +114,24 @@ export function WalletCard({ wallet, onRename, chainNetwork }: WalletCardProps) 
           </DialogContent>
         </Dialog>
 
-        <h1 className="text-2xl mb-2">${walletData.totalBalance.toFixed(2)}</h1>
+
+        {/* needs to fix */}
+        {/* <h1 className="text-2xl mb-2">
+          {walletData ? (
+            `$${walletData.totalBalance.toFixed(2)}`
+          ) : (
+            <span className="inline-block h-6 w-24 bg-muted animate-pulse rounded" />
+          )}
+        </h1>
+
         <div className="flex gap-2 text-sm">
-          <span>
-            {walletData.solBalance} SOL
-          </span>
-          {walletData.tokens &&
-            walletData.tokens.filter(token => token.symbol).map((token, index) => (
+          {walletData?.tokens &&
+            filterWalletTokenData(walletData).map((token, index) => (
               <span key={index}>
-                {(token.amount / 10 ** token.decimals)} {token.symbol}
+                {token.amount / 10 ** token.decimals} {token.symbol}
               </span>
             ))}
-        </div>
+        </div> */}
       </div>
     </>
   );

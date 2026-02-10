@@ -17,7 +17,7 @@ export type blockchain = 'Bitcoin' | 'Ethereum' | 'Solana';
 export type wallet = { name: string, address: string , publicKey: string, privateKey: string, chain: string, id: number}
 
 export type WalletCardProps = { 
-  wallet: walletsWithData,
+  wallet: walletsWithData | wallet,
   onRename: (id: number, name: string) => void,
   chainNetwork?: 'main' | 'dev'
 }
@@ -35,12 +35,12 @@ export type token = {
 }
 export type walletsWithData = wallet & { 
   mainNet: { 
-    solBalance: number,
+    balance: number,
     tokens: token[]
     totalBalance: number
   },
   devNet : { 
-    solBalance: number,
+    balance: number,
     tokens: token[]
     totalBalance: number
   }
@@ -52,14 +52,13 @@ export type WalletDataResponse = {
   publicKey: string,
   chain: string,
    mainNet: { 
-    solBalance: number,
+    balance: number,
     tokens: token[]
     totalBalance: number
   },
   devNet : { 
-    solBalance: number,
+    balance: number,
     tokens: token[]
     totalBalance: number
   }
-
 }

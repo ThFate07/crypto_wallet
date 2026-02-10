@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { WalletCard } from "./ui/WalletCard";
-import type { wallet, walletsWithData } from "@/types/types";
+import { type blockchain, type wallet, type walletsWithData } from "@/types/types";
 import { Button } from "./ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { useWallet } from "@/context/WalletContext";
 import { aggregateWalletData, deriveWalletFromSeed } from "@/lib/utils";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import axios from "axios";
@@ -17,9 +16,9 @@ export function Dashboard() {
 
     return [];
   });
-  const { chain, setChain } = useWallet();
+  const [chain, setChain] = useState<blockchain>("Ethereum");
   const [chainNetwork, setChainNetwork] = useState<"main" | "dev">("main");
-  const [walletsWithData, setWalletsWithData] = useState<walletsWithData[]>();
+  const [walletsWithData, setWalletsWithData] = useState<walletsWithData[]>([]);
 
   function onRename(id: number, name: string) {
     const oldWallets: wallet[] = JSON.parse(localStorage.getItem("wallets") ?? "[]");
@@ -40,12 +39,13 @@ export function Dashboard() {
 
   useEffect(() => {
     const fetchBalance = async (wallets: wallet[]) => {
-      const data = wallets.map(w => ({ publicKey: w.publicKey, chain: w.chain }));
-      const url = "http://localhost:3000/fetch-wallet-details"
-      const response = await axios.post(url , { wallets: data });
+      const data = wallets.map(w => ({ publicKey: w.address, chain: w.chain }));
+      const url = "http://localhost:3000/fetch-wallet-details";
+      const response = await axios.post(url, { wallets: data });
 
       if (response.data.message === "successfull") {
         const finalWallet = aggregateWalletData(wallets, response.data.walletWithPrices);
+        console.log(finalWallet)
         setWalletsWithData(finalWallet);
       }
     };
@@ -96,7 +96,11 @@ export function Dashboard() {
                 const masterSeed = Buffer.from(masterSeedHex, "hex");
                 const wallets: wallet[] = JSON.parse(TotalWallets);
 
-                const wallet = deriveWalletFromSeed(masterSeed, chain, wallets.length + 1);
+                const wallet = deriveWalletFromSeed(
+                  masterSeed,
+                  chain,
+                  wallets.filter(wallet => wallet.chain == chain).length,
+                );
 
                 if (wallet) {
                   const updatedWallets = [...wallets, wallet];
@@ -118,12 +122,16 @@ export function Dashboard() {
           </Button>
         </div>
 
-        {walletsWithData &&
-          walletsWithData.map(wallet =>
-            chain == wallet.chain ? (
-              <WalletCard key={wallet.id} wallet={wallet} onRename={onRename} chainNetwork={chainNetwork} />
-            ) : null,
-          )}
+        {wallets &&
+          wallets
+            .filter(wallet => wallet.chain == chain)
+            .map(wallet => {
+              const enriched  = walletsWithData.find(w => w.id === wallet.id)
+              return ( 
+              
+                <WalletCard key={wallet.id} wallet={enriched ?? wallet} onRename={onRename} chainNetwork={chainNetwork} />
+              )
+            })}
       </div>
     </>
   );
