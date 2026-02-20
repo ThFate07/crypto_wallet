@@ -22,10 +22,6 @@ export type WalletCardProps = {
   chainNetwork?: 'main' | 'dev'
 }
 
-export type WalletCardEditProps = { 
-  wallet: wallet,
-  onRename: (id: number, name: string) => void,
-}
 
 export type token = { 
   mint: string,
@@ -33,7 +29,8 @@ export type token = {
   decimals: number,
   symbol?: string
 }
-export type walletsWithData = wallet & { 
+
+export type FetchedData = {  
   mainNet: { 
     balance: number,
     tokens: token[]
@@ -44,9 +41,9 @@ export type walletsWithData = wallet & {
     tokens: token[]
     totalBalance: number
   }
-};
+}
 
-
+export type walletsWithData = wallet & FetchedData
 
 export type WalletDataResponse = { 
   publicKey: string,
@@ -57,6 +54,15 @@ export type WalletDataResponse = {
     totalBalance: number
   },
   devNet : { 
+    balance: number,
+    tokens: token[]
+    totalBalance: number
+  }
+}
+
+export type TransactionDialogProps = { 
+  wallet: wallet
+  walletData: { 
     balance: number,
     tokens: token[]
     totalBalance: number
