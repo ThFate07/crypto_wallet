@@ -98,3 +98,20 @@ export function filterWalletTokenData(walletData: { balance: number; tokens: tok
     token => token.symbol && token.symbol.trim() !== "" && token.symbol.toUpperCase() !== "UNKNOWN",
   );
 }
+
+export function createNewWallet(chain: blockchain, setWallets: React.Dispatch<React.SetStateAction<wallet[]>>) {
+  const masterSeedHex = localStorage.getItem("masterSeed");
+  const TotalWallets = localStorage.getItem("wallets") ?? "[]";
+  if (masterSeedHex && TotalWallets) {
+    const masterSeed = Buffer.from(masterSeedHex, "hex");
+    const wallets: wallet[] = JSON.parse(TotalWallets);
+
+    const wallet = deriveWalletFromSeed(masterSeed, chain, wallets.filter(wallet => wallet.chain == chain).length);
+
+    if (wallet) {
+      const updatedWallets = [...wallets, wallet];
+      localStorage.setItem("wallets", JSON.stringify(updatedWallets));
+      setWallets(updatedWallets);
+    }
+  }
+}

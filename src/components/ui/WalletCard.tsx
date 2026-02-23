@@ -12,8 +12,9 @@ import { Input } from "./input";
 import { Copy, Check } from "lucide-react";
 import { filterWalletTokenData, handleCopy } from "@/lib/utils";
 import { useState } from "react";
-import type { TransactionDialogProps, WalletCardProps } from "@/types/types";
-import { requestAirdropSafe } from "@/lib/solana";
+import type { WalletCardProps } from "@/types/types";
+import { requestAirdrop } from "@/lib/solana";
+import { TransactionDialog } from "../TransactionDialog";
 
 function WalletEditForm({ wallet, onRename, chainNetwork }: WalletCardProps) {
   const [name, setName] = useState(wallet.name);
@@ -23,7 +24,7 @@ function WalletEditForm({ wallet, onRename, chainNetwork }: WalletCardProps) {
   async function handleAirdropRequest() {
     try {
       setRequestAirdropLoading(true);
-      const response = await requestAirdropSafe(wallet.publicKey, wallet.chain);
+      const response = await requestAirdrop(wallet.publicKey, wallet.chain);
       if (response) setRequestAirdropStatus("Success");
     } catch (error) {
       console.log(error);
@@ -78,7 +79,7 @@ function WalletEditForm({ wallet, onRename, chainNetwork }: WalletCardProps) {
 
           {chainNetwork === "dev" ? (
             <Button onClick={handleAirdropRequest}>
-              {requestAirdropStatus ? requestAirdropStatus : (requestAirdropLoading) ? "loading..." : "Request Airdrop"}
+              {requestAirdropStatus ? requestAirdropStatus : requestAirdropLoading ? "loading..." : "Request Airdrop"}
             </Button>
           ) : null}
         </div>
@@ -87,51 +88,7 @@ function WalletEditForm({ wallet, onRename, chainNetwork }: WalletCardProps) {
   );
 }
 
-function TransactionDialog({ wallet, walletData }: TransactionDialogProps) {
-  const [sendToAddress, setSendToAddress] = useState("");
-  const [amount, setAmount] = useState<number>(0);
 
-  function handleMax() {
-    setAmount(walletData.totalBalance);
-  }
-
-  return (
-    <>
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-col gap-2">
-          <h1>From wallet: {wallet.name}</h1>
-          <div>
-            <Input value={wallet.address}></Input>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <h1>To</h1>
-          <div>
-            <Input value={sendToAddress} onChange={e => setSendToAddress(e.target.value)}></Input>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <h1>Amount</h1>
-          <div className="relative">
-            <Input value={amount} onChange={e => setAmount(Number(e.target.value))}></Input>
-            <p className="absolute top-2 right-16">{wallet.chain.slice(0, 3).toUpperCase()}</p>
-            <p
-              className="absolute top-2 right-4 bg-transparent cursor-pointer transition-all duration-150 hover:brightness-125"
-              onClick={handleMax}
-            >
-              MAX
-            </p>
-          </div>
-          <p className="text-sm">Available: {walletData.totalBalance}</p>
-        </div>
-
-        <Button className="bg-[#B153D7] hover:bg-[#b767d6] hover:scale-[1.01] text-white mt-2">Send</Button>
-      </div>
-    </>
-  );
-}
 
 export function WalletCard({ wallet, onRename, chainNetwork }: WalletCardProps) {
   const [copied, setCopied] = useState(false);

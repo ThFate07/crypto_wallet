@@ -4,10 +4,12 @@ import axios from "axios";
 const heliusAPI = import.meta.env.VITE_HELIUS_API;
 const main = new Connection(`https://mainnet.helius-rpc.com/?api-key=${heliusAPI}`, "confirmed");
 const dev = new Connection("https://api.devnet.solana.com", "confirmed");
+
 export const solanaConnections = {
   main,
   dev,
 };
+
 const API_KEYS = {
   main: import.meta.env.VITE_HELIUS_API,
   dev: import.meta.env.VITE_DEV_HELIUS_API,
@@ -54,16 +56,10 @@ export async function getPrices(mintAddress: string[]) {
 }
 
 // only solana for now
-export async function requestAirdropSafe(pubkey: string) {
-  try {
-    const receiever = new PublicKey(pubkey)
-    const sig = await solanaConnections.dev.requestAirdrop(receiever, LAMPORTS_PER_SOL);
-    return sig;
-
-  } catch (e: any) {
-    if (e?.message?.includes("429")) {
-      throw new Error("Airdrop rate limit reached. Try later.");
-    }
-    throw e;
+export async function requestAirdrop(pubKey: string,  chain:string) {
+  if (chain != "Solana") throw new Error("ONLY SOLANA SUPPORTED FOR NOW");
+  const response = await axios.post('http://localhost:3000/requestSolAirdrop', {pubKey});
+  if (response.data?.result) { 
+    return response.data?.result
   }
 }
