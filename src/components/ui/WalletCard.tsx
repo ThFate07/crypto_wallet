@@ -90,7 +90,7 @@ function WalletEditForm({ wallet, onRename, chainNetwork }: WalletCardProps) {
 
 
 
-export function WalletCard({ wallet, onRename, chainNetwork }: WalletCardProps) {
+export function WalletCard({ wallet, onRename, chainNetwork, fetchBalance }: WalletCardProps) {
   const [copied, setCopied] = useState(false);
 
   const walletData = "mainNet" in wallet ? (chainNetwork === "main" ? wallet.mainNet : wallet.devNet) : undefined;
@@ -139,7 +139,7 @@ export function WalletCard({ wallet, onRename, chainNetwork }: WalletCardProps) 
                     <DialogTitle className="mb-2">Transaction</DialogTitle>
                     <DialogDescription>
                       {walletData ? (
-                        <TransactionDialog wallet={wallet} walletData={walletData} />
+                        <TransactionDialog wallet={wallet} walletData={walletData} chainNetwork={chainNetwork} fetchBalance={fetchBalance}/>
                       ) : (
                         <span className="inline-block h-6 w-24 bg-muted animate-pulse rounded" />
                       )}

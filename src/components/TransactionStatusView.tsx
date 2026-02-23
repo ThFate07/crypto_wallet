@@ -1,16 +1,22 @@
 import type { transactionStatus } from "@/types/types";
 import { Spinner } from "./ui/spinner";
 
-export function TransactionStatusView({ status }: { status: transactionStatus }) {
+export function TransactionStatusView({ status, message }: { status: transactionStatus, message: string }) {
   return (
     <>
-      <div className="flex flex-1 justify-center items-center">
-        {status === "Loading" ? (
+      <div className="flex flex-1 justify-center items-center min-h-72">
+        {status === "loading" ? (
           <Spinner className="size-40" />
-        ) : status === "Success" ? (
-          <img src="checkmark.png" className="size-40"></img>
+        ) : status === "success" ? (
+          <div className="flex flex-col justify-center items-center gap-8 flex-wrap">
+            <img src="checkmark.png" className="size-40"></img>
+            <h1 className="max-w-md break-all">{message}</h1>
+          </div>
         ) : (
-          <img>Failed</img>
+          <div className="flex flex-col justify-center items-center gap-8">
+            <img src="failed.png" className="size-40"></img>
+            <h1 className="text-red-600">{message}</h1>
+          </div>
         )}
       </div>
     </>

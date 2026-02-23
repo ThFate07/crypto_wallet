@@ -11,7 +11,10 @@ export function TransactionForm({
   handleMax,
   walletData,
   handleSend,
+  formError
 }: TransactionFormProps) {
+
+
   return (
     <>
       <div className="flex flex-col gap-3 min-h-72">
@@ -42,6 +45,7 @@ export function TransactionForm({
             </p>
           </div>
           <p className="text-sm">Available: {walletData.balance}</p>
+          <p className="text-red-600">{formError}</p>
         </div>
 
         <Button className="bg-[#B153D7] hover:bg-[#b767d6] hover:scale-[1.01] text-white mt-2" onClick={handleSend}>

@@ -19,7 +19,6 @@ export function Dashboard() {
   const [chain, setChain] = useState<blockchain>("Solana");
   const [chainNetwork, setChainNetwork] = useState<"main" | "dev">("main");
   const [walletsWithData, setWalletsWithData] = useState<walletsWithData[]>([]);
-
   function onRename(id: number, name: string) {
     const updatedWallets = wallets.map(wallet => {
       if (wallet.id === id) {
@@ -33,21 +32,33 @@ export function Dashboard() {
     localStorage.setItem("wallets", JSON.stringify(updatedWallets));
   }
 
-  useEffect(() => {
-    const fetchBalance = async (wallets: wallet[]) => {
-      const data = wallets.map(w => ({ publicKey: w.address, chain: w.chain }));
+  const fetchBalance = async (walletList?: wallet[]) => {
+    const lists = walletList ?? wallets;
+    if (!lists?.length) {
+      setWalletsWithData([]);
+      return;
+    }
+
+    try {
+      const data = lists.map(w => ({ publicKey: w.address, chain: w.chain }));
       const url = "http://localhost:3000/fetch-wallet-details";
       const response = await axios.post(url, { wallets: data });
 
       if (response.data.message === "successfull") {
-        const finalWallet = aggregateWalletData(wallets, response.data.walletWithPrices);
+        const finalWallet = aggregateWalletData(lists, response.data.walletWithPrices);
         console.log(finalWallet);
         setWalletsWithData(finalWallet);
+        return;
       }
-    };
+    } catch (error) {
+      console.log(error);
+      // show error in fetching data as a toast or something
+    }
+  };
 
-    fetchBalance(wallets);
-  }, [wallets]);
+  useEffect(() => {
+    fetchBalance();
+  }, []);
 
   return (
     <>
@@ -59,7 +70,13 @@ export function Dashboard() {
         </div>
 
         <div className="w-full max-w-4xl flex gap-2">
-          <Button className="" onClick={() => createNewWallet(chain, setWallets)}>
+          <Button
+            className=""
+            onClick={() => {
+              const updatedWallets = createNewWallet(chain, setWallets);
+              fetchBalance(updatedWallets)
+            }}
+          >
             New Wallet
           </Button>
 
@@ -84,6 +101,7 @@ export function Dashboard() {
                   wallet={enriched ?? wallet}
                   onRename={onRename}
                   chainNetwork={chainNetwork}
+                  fetchBalance={() => fetchBalance(wallets)}
                 />
               );
             })}

@@ -5,7 +5,7 @@ import { Buffer } from "buffer";
 import { generateMnemonic, mnemonicToSeedSync } from "bip39";
 import { derivePath } from "ed25519-hd-key";
 import nacl from "tweetnacl";
-import { Keypair } from "@solana/web3.js";
+import { Keypair, PublicKey } from "@solana/web3.js";
 import { ethers } from "ethers";
 import HDNode from "hdkey";
 import { toast } from "sonner";
@@ -112,6 +112,25 @@ export function createNewWallet(chain: blockchain, setWallets: React.Dispatch<Re
       const updatedWallets = [...wallets, wallet];
       localStorage.setItem("wallets", JSON.stringify(updatedWallets));
       setWallets(updatedWallets);
+      return updatedWallets
     }
   }
 }
+
+export function validateInput(sendToAddress: string, amount: number) {
+  if (!sendToAddress) {
+    throw new Error("Recipient address is required.");
+  }
+
+  // Real validation — will throw if invalid
+  try {
+    new PublicKey(sendToAddress);
+  } catch {
+    throw new Error("Invalid public key.");
+  }
+
+  if (!Number.isFinite(amount) || amount <= 0) {
+    throw new Error("Amount must be greater than zero.");
+  }
+}
+

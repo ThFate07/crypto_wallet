@@ -26,7 +26,8 @@ export type wallet = {
 export type WalletCardProps = {
   wallet: walletsWithData | wallet;
   onRename: (id: number, name: string) => void;
-  chainNetwork?: "main" | "dev";
+  chainNetwork: "main" | "dev";
+  fetchBalance?: (wallets: wallet[]) => Promise<void>
 };
 
 export type token = {
@@ -58,9 +59,11 @@ export type WalletDataResponse = {
 export type TransactionDialogProps = {
   wallet: wallet;
   walletData: walletData;
+  chainNetwork: "main" | "dev";
+  fetchBalance: () => Promise<void>
 };
 
-export type transactionStatus = "idle" | "Loading" | "Success" | "error";
+export type transactionStatus = "idle" | "loading" | "success" | "error";
 
 export interface TransactionFormProps {
   wallet: wallet;
@@ -71,15 +74,15 @@ export interface TransactionFormProps {
   handleMax: () => void;
   walletData: walletData;
   handleSend: () => void;
+  formError: string | null
 }
 
-
-export interface ToggleChainProps { 
-  chain: blockchain,
+export interface ToggleChainProps {
+  chain: blockchain;
   setChain: React.Dispatch<React.SetStateAction<blockchain>>;
 }
 
-export interface SelectNetworkProps { 
+export interface SelectNetworkProps {
   chainNetwork: "main" | "dev";
   setChainNetwork: React.Dispatch<React.SetStateAction<"main" | "dev">>;
 }
