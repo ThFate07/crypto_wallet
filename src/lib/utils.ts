@@ -117,9 +117,13 @@ export function createNewWallet(chain: blockchain, setWallets: React.Dispatch<Re
   }
 }
 
-export function validateInput(sendToAddress: string, amount: number) {
+export function validateInput(sendToAddress: string, amount: number | ""): asserts amount is number {
   if (!sendToAddress) {
     throw new Error("Recipient address is required.");
+  }
+
+  if (amount === "") { 
+    throw new Error("Invalid amount specified")
   }
 
   // Real validation — will throw if invalid

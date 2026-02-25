@@ -6,6 +6,7 @@ import { aggregateWalletData, createNewWallet } from "@/lib/utils";
 import axios from "axios";
 import { ToggleChain } from "./ToggleChain";
 import { SelectNetwork } from "./SelectNetwork";
+import { toast } from "sonner";
 
 export function Dashboard() {
   const [wallets, setWallets] = useState<wallet[]>(() => {
@@ -35,7 +36,6 @@ export function Dashboard() {
   const fetchBalance = async (walletList?: wallet[]) => {
     const lists = walletList ?? wallets;
     if (!lists?.length) {
-      setWalletsWithData([]);
       return;
     }
 
@@ -53,6 +53,7 @@ export function Dashboard() {
     } catch (error) {
       console.log(error);
       // show error in fetching data as a toast or something
+      toast("Error fetching wallets data")
     }
   };
 
@@ -102,6 +103,7 @@ export function Dashboard() {
                   onRename={onRename}
                   chainNetwork={chainNetwork}
                   fetchBalance={() => fetchBalance(wallets)}
+                  chain={chain}
                 />
               );
             })}

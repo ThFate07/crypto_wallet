@@ -5,10 +5,11 @@ import { TransactionStatusView } from "./TransactionStatusView";
 
 import { sendTransaction } from "@/lib/solana";
 import { validateInput } from "@/lib/utils";
+import { sendEthTransaction } from "@/lib/ethereum";
 
-export function TransactionDialog({ wallet, walletData, chainNetwork, fetchBalance}: TransactionDialogProps) {
+export function TransactionDialog({ wallet, walletData, chainNetwork, fetchBalance, chain}: TransactionDialogProps) {
   const [sendToAddress, setSendToAddress] = useState("");
-  const [amount, setAmount] = useState<number>(0);
+  const [amount, setAmount] = useState<number | ''>('');
   const [status, setStatus] = useState<transactionStatus>("idle");
   const [message, setMessage] = useState("");
   const [formError, setFormError] = useState<string | null>(null)
@@ -51,7 +52,7 @@ export function TransactionDialog({ wallet, walletData, chainNetwork, fetchBalan
     try {
       setStatus("loading");
 
-      const sig = await sendTransaction(wallet, chainNetwork, sendToAddress, amount);
+      const sig = (chain === "Solana") ? await sendTransaction(wallet, chainNetwork, sendToAddress, amount): await sendEthTransaction(wallet, chainNetwork, sendToAddress, amount, );
 
       setMessage("Transaction Successful: " + sig);
       setStatus("success");
@@ -81,3 +82,4 @@ export function TransactionDialog({ wallet, walletData, chainNetwork, fetchBalan
     />
   );
 }
+

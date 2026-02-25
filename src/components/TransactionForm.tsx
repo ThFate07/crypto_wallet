@@ -35,7 +35,7 @@ export function TransactionForm({
         <div className="flex flex-col gap-2">
           <h1>Amount</h1>
           <div className="relative">
-            <Input value={amount} onChange={e => setAmount(Number(e.target.value))}></Input>
+            <Input type="number" value={amount} onChange={e => setAmount(e.target.value === "" ? "" : Number(e.target.value))}></Input>
             <p className="absolute top-2 right-16">{wallet.chain.slice(0, 3).toUpperCase()}</p>
             <p
               className="absolute top-2 right-4 bg-transparent cursor-pointer transition-all duration-150 hover:brightness-125"

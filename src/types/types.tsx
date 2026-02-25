@@ -27,7 +27,14 @@ export type WalletCardProps = {
   wallet: walletsWithData | wallet;
   onRename: (id: number, name: string) => void;
   chainNetwork: "main" | "dev";
-  fetchBalance?: (wallets: wallet[]) => Promise<void>
+  fetchBalance: (walletList?: wallet[] | undefined) => Promise<void>;
+  chain: blockchain;
+};
+
+export type WalletEditCardProps = {
+  wallet: walletsWithData | wallet;
+  onRename: (id: number, name: string) => void;
+  chainNetwork: "main" | "dev";
 };
 
 export type token = {
@@ -60,7 +67,8 @@ export type TransactionDialogProps = {
   wallet: wallet;
   walletData: walletData;
   chainNetwork: "main" | "dev";
-  fetchBalance: () => Promise<void>
+  fetchBalance: (walletList?: wallet[] | undefined) => Promise<void>;
+  chain?: blockchain;
 };
 
 export type transactionStatus = "idle" | "loading" | "success" | "error";
@@ -69,12 +77,12 @@ export interface TransactionFormProps {
   wallet: wallet;
   sendToAddress: string;
   setSendToAddress: React.Dispatch<React.SetStateAction<string>>;
-  amount: number;
-  setAmount: React.Dispatch<React.SetStateAction<number>>;
+  amount: number | "";
+  setAmount: React.Dispatch<React.SetStateAction<number | ''>>;
   handleMax: () => void;
   walletData: walletData;
   handleSend: () => void;
-  formError: string | null
+  formError: string | null;
 }
 
 export interface ToggleChainProps {

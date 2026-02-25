@@ -12,11 +12,11 @@ import { Input } from "./input";
 import { Copy, Check } from "lucide-react";
 import { filterWalletTokenData, handleCopy } from "@/lib/utils";
 import { useState } from "react";
-import type { WalletCardProps } from "@/types/types";
+import type { WalletCardProps, WalletEditCardProps } from "@/types/types";
 import { requestAirdrop } from "@/lib/solana";
 import { TransactionDialog } from "../TransactionDialog";
 
-function WalletEditForm({ wallet, onRename, chainNetwork }: WalletCardProps) {
+function WalletEditForm({ wallet, onRename, chainNetwork }: WalletEditCardProps) {
   const [name, setName] = useState(wallet.name);
   const [requestAirdropLoading, setRequestAirdropLoading] = useState(false);
   const [requestAirdropStatus, setRequestAirdropStatus] = useState<"Success" | "failed" | null>(null);
@@ -90,7 +90,7 @@ function WalletEditForm({ wallet, onRename, chainNetwork }: WalletCardProps) {
 
 
 
-export function WalletCard({ wallet, onRename, chainNetwork, fetchBalance }: WalletCardProps) {
+export function WalletCard({ wallet, onRename, chainNetwork, fetchBalance, chain }: WalletCardProps) {
   const [copied, setCopied] = useState(false);
 
   const walletData = "mainNet" in wallet ? (chainNetwork === "main" ? wallet.mainNet : wallet.devNet) : undefined;
@@ -106,7 +106,7 @@ export function WalletCard({ wallet, onRename, chainNetwork, fetchBalance }: Wal
               <div
                 className="flex gap-2 cursor-pointer"
                 onClick={() => {
-                  handleCopy(wallet.publicKey, "Address copied");
+                  handleCopy(wallet.address, "Address copied");
                   setCopied(true);
                   setTimeout(() => {
                     setCopied(false);
@@ -115,7 +115,7 @@ export function WalletCard({ wallet, onRename, chainNetwork, fetchBalance }: Wal
                 title="Copy address"
               >
                 <span className="text-sm">
-                  {wallet.publicKey.slice(0, 3)}...{wallet.publicKey.slice(-3)}
+                  {wallet.address.slice(0, 3)}...{wallet.address.slice(-3)}
                 </span>
 
                 {!copied ? (
@@ -139,7 +139,7 @@ export function WalletCard({ wallet, onRename, chainNetwork, fetchBalance }: Wal
                     <DialogTitle className="mb-2">Transaction</DialogTitle>
                     <DialogDescription>
                       {walletData ? (
-                        <TransactionDialog wallet={wallet} walletData={walletData} chainNetwork={chainNetwork} fetchBalance={fetchBalance}/>
+                        <TransactionDialog wallet={wallet} walletData={walletData} chainNetwork={chainNetwork} fetchBalance={fetchBalance} chain={chain}/>
                       ) : (
                         <span className="inline-block h-6 w-24 bg-muted animate-pulse rounded" />
                       )}
