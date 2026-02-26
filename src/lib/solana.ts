@@ -30,7 +30,7 @@ export const getAccountInfo = async (publicKey: string, connectionType: "main" |
 // only solana for now
 export async function requestAirdrop(pubKey: string, chain: string) {
   if (chain != "Solana") throw new Error("ONLY SOLANA SUPPORTED FOR NOW");
-  const response = await axios.post("http://localhost:3000/requestSolAirdrop", { pubKey });
+  const response = await axios.post("https://crypto-wallet-backend-mhjg.onrender.com/requestSolAirdrop", { pubKey });
   if (response.data?.result) {
     return response.data?.result;
   }

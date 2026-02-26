@@ -41,7 +41,7 @@ export function Dashboard() {
 
     try {
       const data = lists.map(w => ({ publicKey: w.address, chain: w.chain }));
-      const url = "http://localhost:3000/fetch-wallet-details";
+      const url = "https://crypto-wallet-backend-mhjg.onrender.com/fetch-wallet-details";
       const response = await axios.post(url, { wallets: data });
 
       if (response.data.message === "successfull") {
