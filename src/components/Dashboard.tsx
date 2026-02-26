@@ -17,6 +17,7 @@ export function Dashboard() {
 
     return [];
   });
+  
   const [chain, setChain] = useState<blockchain>("Solana");
   const [chainNetwork, setChainNetwork] = useState<"main" | "dev">("main");
   const [walletsWithData, setWalletsWithData] = useState<walletsWithData[]>([]);

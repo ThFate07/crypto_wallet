@@ -70,9 +70,14 @@ export const generateWallet = (chain: blockchain, index: number) => {
   return { mnemonic, wallet };
 };
 
-export function handleCopy(toCopyString: string, toastMsg: string) {
-  navigator.clipboard.writeText(toCopyString);
-  toast(toastMsg, { position: "bottom-right" });
+export async function handleCopy(toCopyString: string, toastMsg: string) {
+  try { 
+    await navigator.clipboard.writeText(toCopyString);
+    toast(toastMsg, { position: "bottom-right" });
+  } catch (error) { 
+    toast("Copying text failed....")
+    console.log(error)
+  }
 }
 
 export function aggregateWalletData(wallets: wallet[], walletData: WalletDataResponse[]) {
@@ -138,3 +143,7 @@ export function validateInput(sendToAddress: string, amount: number | ""): asser
   }
 }
 
+export function hasSeedPhrase() { 
+  const masterSeed = localStorage.getItem("masterSeed")
+  return !!masterSeed && masterSeed.trim().length > 0;
+}

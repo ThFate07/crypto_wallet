@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import SeedPhrase from "./components/SeedPhrase";
 import { Dashboard } from "./components/Dashboard";
 import { Toaster } from "@/components/ui/sonner"
+import { RequireNoWallet } from "./components/RequireNoWallet";
+import { RequireWallet } from "./components/RequireWallet";
 
 function App() {
   return (
@@ -18,9 +20,9 @@ function App() {
             </div>
 
             <Routes>
-              <Route path="/onboarding/select-chain" element={< SelectBlockchain />}></Route>
-              <Route path="/onboarding/seed-phrase" element={< SeedPhrase />}></Route>
-              <Route path="/dashboard" element={< Dashboard/>}></Route>
+              <Route path="/onboarding/select-chain" element={<RequireNoWallet><SelectBlockchain/></RequireNoWallet>}></Route>
+              <Route path="/onboarding/seed-phrase" element={<RequireNoWallet>< SeedPhrase /></RequireNoWallet>}></Route>
+              <Route path="/dashboard" element={<RequireWallet>< Dashboard/></RequireWallet>}></Route>
               <Route path="*" element={<Navigate to={"/onboarding/select-chain"} replace></Navigate>}></Route>
             </Routes>
 
