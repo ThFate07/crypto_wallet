@@ -22,7 +22,7 @@ export function Dashboard() {
   const [chainNetwork, setChainNetwork] = useState<"main" | "dev">("main");
   const [walletsWithData, setWalletsWithData] = useState<walletsWithData[]>([]);
   function onRename(id: number, name: string) {
-    const updatedWallets = wallets.map(wallet => {
+    const updatedWallets = walletsWithData.map(wallet => {
       if (wallet.id === id) {
         return { ...wallet, name };
       }
@@ -30,7 +30,8 @@ export function Dashboard() {
       return wallet;
     });
 
-    setWallets(updatedWallets);
+    setWalletsWithData(updatedWallets);
+    console.log("trigger rerender")
     localStorage.setItem("wallets", JSON.stringify(updatedWallets));
   }
 
