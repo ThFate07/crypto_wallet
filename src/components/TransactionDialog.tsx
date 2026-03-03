@@ -54,7 +54,7 @@ export function TransactionDialog({ wallet, walletData, chainNetwork, fetchBalan
 
       const sig = (chain === "Solana") ? await sendTransaction(wallet, chainNetwork, sendToAddress, amount): await sendEthTransaction(wallet, chainNetwork, sendToAddress, amount, );
 
-      setMessage("Transaction Successful: " + sig);
+      setMessage(sig);
       setStatus("success");
 
       fetchBalance();
@@ -66,7 +66,7 @@ export function TransactionDialog({ wallet, walletData, chainNetwork, fetchBalan
     }
   }
 
-  if (status != "idle") return <TransactionStatusView status={status} message={message} />;
+  if (status != "idle") return <TransactionStatusView status={status} message={message} chainNetwork={chainNetwork}/>;
 
   return (
     <TransactionForm

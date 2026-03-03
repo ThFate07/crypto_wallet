@@ -1,7 +1,15 @@
 import type { transactionStatus } from "@/types/types";
 import { Spinner } from "./ui/spinner";
 
-export function TransactionStatusView({ status, message }: { status: transactionStatus, message: string }) {
+export function TransactionStatusView({
+  status,
+  message,
+  chainNetwork,
+}: {
+  status: transactionStatus;
+  message: string;
+  chainNetwork: "main" | "dev";
+}) {
   return (
     <>
       <div className="flex flex-1 justify-center items-center min-h-72">
@@ -10,7 +18,9 @@ export function TransactionStatusView({ status, message }: { status: transaction
         ) : status === "success" ? (
           <div className="flex flex-col justify-center items-center gap-8 flex-wrap">
             <img src="checkmark.png" className="size-40"></img>
-            <h1 className="max-w-md break-all">{message}</h1>
+            <a className="underline cursor-pointer" href={`https://explorer.solana.com/tx/${message}` + (chainNetwork === "dev" ? "?cluster=devnet" : '')} target="_blank" rel="noopener noreferrer">
+              View Transaction
+            </a>
           </div>
         ) : (
           <div className="flex flex-col justify-center items-center gap-8">

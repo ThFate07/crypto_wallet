@@ -45,12 +45,12 @@ export default function SeedPhrase() {
         <div className="flex flex-col justify-center mb-6">
           <h2 className="text-2xl font-bold mb-4">Secret Recovery Phrase</h2>
 
-          <div className="bg-yellow-500/10 h-full max-h-20 rounded-sm p-4">
+          <div className="bg-yellow-500/10 h-full md:max-h-20 rounded-sm p-4">
             <div className="flex items-center content-center gap-4">
               <div>{WarningIcon()}</div>
 
-              <div>
-                <p>
+              <div className="">
+                <p className="text-sm md:text-[16px]">
                   <span className="font-bold">Warning: </span> Never share this phrase. if you share your recovery
                   phrase your wallet cannot be recovered.
                 </p>

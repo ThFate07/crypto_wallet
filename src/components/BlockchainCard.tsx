@@ -8,11 +8,11 @@ export default function BlockchainCard({ imageSrc, blockchainName, selectedChain
       <div className="h-14 bg-[#26282E] rounded-xl p-4 cursor-pointer hover:bg-[#2F3239] hover:scale-[1.01] active:scale-[0.97] transition-all duration-150 ease-out" onClick={() => setSelectedChain(blockchainName)}>
         <div className="flex gap-3 h-full items-center">
           <div className="">
-            <img src={imageSrc} className="w-8 h-8 object-contain rounded-lg" alt="" />
+            <img src={imageSrc} className="w-7 h-7 md:w-8 md:h-8 object-contain rounded-lg" alt="" />
           </div>
 
           <div>
-            <p className="text-xl">{blockchainName}</p>
+            <p className="text-lg md:text-xl">{blockchainName}</p>
           </div>
 
           {isActive ? (
